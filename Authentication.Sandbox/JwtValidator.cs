@@ -1,3 +1,4 @@
+namespace Authentication.Sandbox;
 public class JwtValidator
 {
     public static (bool, string) ValidateToken(string token, RSA publicKey)
@@ -8,7 +9,10 @@ public class JwtValidator
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new RsaSecurityKey(publicKey),
+                IssuerSigningKey = new RsaSecurityKey(publicKey)
+                {
+                    KeyId = "TestSigning"
+                },
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidIssuer = "testing.com.br",

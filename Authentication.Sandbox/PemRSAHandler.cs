@@ -1,5 +1,4 @@
-using System.IO;
-
+namespace Authentication.Sandbox;
 public class PemRSAHandler
 {
     public static RSA ReadRSAPrivateKeyFromPemFile(string path)

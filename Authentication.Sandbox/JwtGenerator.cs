@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-
+namespace Authentication.Sandbox;
 public class JwtGenerator
 {
     public static string GenerateToken(RSA privateKey)
@@ -12,18 +11,21 @@ public class JwtGenerator
             CreateClaims(),
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: new SigningCredentials(
-                new RsaSecurityKey(privateKey), SecurityAlgorithms.RsaSha256));
+                new RsaSecurityKey(privateKey)
+                {
+                    KeyId = "TestSigning"
+                }, SecurityAlgorithms.RsaSha256));
 
         return tokenHandler.WriteToken(token);
     }
 
     private static IEnumerable<Claim> CreateClaims()
     {
-        IEnumerable<Claim> claims = new List<Claim>
-        {
+        IEnumerable<Claim> claims =
+        [
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("UserIdentity", "Joshep Edward")
-        };
+        ];
 
         return claims;
     }
