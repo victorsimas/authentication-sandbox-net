@@ -11,15 +11,15 @@ public class JwtValidator
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new RsaSecurityKey(publicKey)
                 {
-                    KeyId = "TestSigning"
+                    KeyId = JwtGenerator.Kid
                 },
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidIssuer = "testing.com.br",
-                ValidAudience = "testing2.com.br",
+                ValidIssuer = JwtGenerator.Issuer,
+                ValidAudience = JwtGenerator.Audience,
             }, out SecurityToken validatedToken);
 
-            return (true, "Válido!");
+            return (true, "Valid!");
         }
         catch (Exception ex)
         {

@@ -1,19 +1,23 @@
 namespace Authentication.Sandbox;
 public class JwtGenerator
 {
+    public const string Issuer = "https://some-auth.domain.com.br";
+    public const string Audience = "https://some.domain.com.br";
+    public const string Kid = "TestingSignatureKey";
+
     public static string GenerateToken(RSA privateKey)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
         JwtSecurityToken token = new(
-            "testing.com.br",
-            "testing2.com.br",
+            Issuer,
+            Audience,
             CreateClaims(),
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: DateTime.UtcNow.AddYears(10),
             signingCredentials: new SigningCredentials(
                 new RsaSecurityKey(privateKey)
                 {
-                    KeyId = "TestSigning"
+                    KeyId = Kid
                 }, SecurityAlgorithms.RsaSha256));
 
         return tokenHandler.WriteToken(token);

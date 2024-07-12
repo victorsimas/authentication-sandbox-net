@@ -1,13 +1,17 @@
-﻿RSA privateKey = PemRSAHandler.ReadRSAPrivateKeyFromPemFile("private_key.pem");
-RSA publicKey = PemRSAHandler.ReadRSAPublicKeyFromPemFile("public_key.pem");
+﻿string tokenJWT = string.Empty;
 
-(bool resultado, string mensagem) = GerarEValidarToken(privateKey, publicKey);
-
-Console.WriteLine("\n Assinatura Privada e Validacao Publica : " + resultado + " " + mensagem);
-
-static (bool, string) GerarEValidarToken(RSA signingKey, RSA validationKey)
+using (RSA privateKey = PemRSAHandler.ReadRsaPkcs8PrivateKeyFromFile("private_key.pem", "TestingAsymmetric"))
 {
-    string tokenJWT = JwtGenerator.GenerateToken(signingKey);
+    tokenJWT = JwtGenerator.GenerateToken(privateKey);
 
-    return JwtValidator.ValidateToken(tokenJWT, validationKey);
-}
+    Console.WriteLine("Authenticated! Here's your token:\n" + tokenJWT);
+};
+
+using (RSA publicKey = PemRSAHandler.ReadRsaPkcs8PublicKeyFromFile("public_key.pem"))
+{
+    (bool jwtIsValid, string message) = JwtValidator.ValidateToken(tokenJWT, publicKey);
+
+    Console.WriteLine("Here's a validation test:\n" + 
+        "IsValid? : " + jwtIsValid + "\n" + 
+        "ValidationMessage : " + message);
+};

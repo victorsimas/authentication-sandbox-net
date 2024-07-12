@@ -1,27 +1,28 @@
 namespace Authentication.Sandbox;
+
 public class PemRSAHandler
 {
-    public static RSA ReadRSAPrivateKeyFromPemFile(string path)
+    public static RSA ReadRsaPkcs8PrivateKeyFromFile(string path, string password)
     {
         string privateKeyPem = File.ReadAllText(path);
-        return CreateRsaPrivateFromPem(privateKeyPem);
+        return CreateRsaPrivateFromPem(privateKeyPem, password);
     }
 
-    private static RSA CreateRsaPrivateFromPem(string pem)
+    private static RSA CreateRsaPrivateFromPem(string pem, string password)
     {
-        pem = pem.Replace("-----BEGIN RSA PRIVATE KEY-----", string.Empty)
-                 .Replace("-----END RSA PRIVATE KEY-----", string.Empty)
+        pem = pem.Replace("-----BEGIN ENCRYPTED PRIVATE KEY-----", string.Empty)
+                 .Replace("-----END ENCRYPTED PRIVATE KEY-----", string.Empty)
                  .Replace("\r", string.Empty)
                  .Replace("\n", string.Empty);
 
         byte[] keyBytes = Convert.FromBase64String(pem);
 
         RSA rsa = RSA.Create();
-        rsa.ImportRSAPrivateKey(keyBytes, out _);
+        rsa.ImportEncryptedPkcs8PrivateKey(password, keyBytes, out _);
         return rsa;
     }
 
-    public static RSA ReadRSAPublicKeyFromPemFile(string path)
+    public static RSA ReadRsaPkcs8PublicKeyFromFile(string path)
     {
         string publicKeyPem = File.ReadAllText(path);
         return CreateRsaPublicFromPem(publicKeyPem);
@@ -29,15 +30,15 @@ public class PemRSAHandler
 
     private static RSA CreateRsaPublicFromPem(string pem)
     {
-        pem = pem.Replace("-----BEGIN RSA PUBLIC KEY-----", string.Empty)
-                 .Replace("-----END RSA PUBLIC KEY-----", string.Empty)
+        pem = pem.Replace("-----BEGIN PUBLIC KEY-----", string.Empty)
+                 .Replace("-----END PUBLIC KEY-----", string.Empty)
                  .Replace("\r", string.Empty)
                  .Replace("\n", string.Empty);
 
         byte[] keyBytes = Convert.FromBase64String(pem);
 
         RSA rsa = RSA.Create();
-        rsa.ImportRSAPublicKey(keyBytes, out _);
+        rsa.ImportSubjectPublicKeyInfo(keyBytes, out _);
         return rsa;
     }
 }
